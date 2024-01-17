@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Resume.Models
 {
@@ -31,6 +33,41 @@ namespace Resume.Models
             Name = name;
             Age = age;
         
+        }
+        public void SummarySave()
+        {
+            XDocument xmlDocument = XDocument.Load("Summary.xml");
+            XElement newPersonElement = new XElement("Person",
+                new XElement("Name", Name),
+                new XElement("Age", Age),
+                new XElement("Email", Email),
+                new XElement("Phone", Phone),
+                new XElement("Adress", Adress),
+                new XElement("Education", Education),
+                new XElement("Experience", Experience),
+                new XElement("Skills", Skills),
+                new XElement("Language", Language)
+            );
+            xmlDocument.Root?.Add(newPersonElement);
+            xmlDocument.Save("Summary.xml");
+        }
+        public static void SummaryLoad(ObservableCollection<SummaryModel> summaryModels)
+        {
+            XDocument xmlDocument = XDocument.Load("Summary.xml");   
+            foreach (XElement personElement in xmlDocument.Descendants("Person"))
+            {
+                SummaryModel person = new SummaryModel();
+                person.Name = personElement.Element("Name").Value;
+                person.Age = int.Parse(personElement.Element("Age").Value);
+                person.Email = personElement.Element("Email").Value;
+                person.Phone = personElement.Element("Phone").Value;
+                person.Adress = personElement.Element("Adress").Value;
+                person.Education = personElement.Element("Education").Value;
+                person.Experience = personElement.Element("Experience").Value;
+                person.Skills = personElement.Element("Skills").Value;
+                person.Language = personElement.Element("Language").Value;
+                summaryModels.Add(person);
+            }
         }
         public override string ToString()
         {
